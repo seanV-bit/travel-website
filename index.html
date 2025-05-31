@@ -1,0 +1,3013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ffffff">
+    <title>Quick Launch Japan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #E60012;
+            --primary-dark: #CC0010;
+            --secondary: #0068B4;
+            --dark: #171412;
+            --gray: #666666;
+            --light-gray: #f5f5f5;
+            --beige: #f3e3d7;
+            --white: #ffffff;
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--dark);
+            background: var(--white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            touch-action: pan-y;
+        }
+
+        /* Prevent pull-to-refresh on iOS */
+        body {
+            overscroll-behavior-y: none;
+        }
+
+        /* App Container */
+        .app {
+            min-height: 100vh;
+            position: relative;
+            background: var(--white);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: calc(56px + var(--safe-area-top));
+            padding-top: var(--safe-area-top);
+            background: var(--white);
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .header-content {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            flex: 1;
+            letter-spacing: -0.015em;
+        }
+
+        .header-button {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: none;
+            color: var(--dark);
+            cursor: pointer;
+            border-radius: 24px;
+            transition: background 0.2s ease;
+        }
+
+        .header-button:active {
+            background: var(--light-gray);
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Screen Container */
+        .screen {
+            min-height: 100vh;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Home Screen Hero */
+        .hero-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-header {
+            height: calc(56px + var(--safe-area-top));
+            padding-top: var(--safe-area-top);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .hero-image {
+            flex: 1;
+            background-color: #C8102E;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+            gap: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-bg 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.033em;
+            color: white;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: white;
+            opacity: 0.95;
+            max-width: 320px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-button {
+            background: var(--beige);
+            color: var(--dark);
+            border: none;
+            border-radius: 24px;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.015em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Airport Selection Screen */
+        .content-container {
+            min-height: 100vh;
+            padding-top: calc(56px + var(--safe-area-top));
+            padding-bottom: calc(20px + var(--safe-area-bottom));
+        }
+
+        .content-padding {
+            padding: 20px 16px;
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.033em;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        /* Airport Cards */
+        .airport-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .airport-card {
+            background: var(--white);
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .airport-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .airport-card:active {
+            background: #fcfcfc;
+            transform: scale(0.98);
+        }
+
+        .airport-card:active::before {
+            transform: scaleY(1);
+        }
+
+        .airport-info {
+            flex: 1;
+        }
+
+        .airport-code {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.015em;
+        }
+
+        .airport-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .airport-city {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .airport-arrow {
+            font-size: 20px;
+            color: #c0c0c0;
+        }
+
+        /* User Type Cards */
+        .user-type-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .user-type-card {
+            background: var(--white);
+            border: 2px solid var(--light-gray);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-type-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .user-type-card:active {
+            transform: scale(0.98);
+            border-color: var(--primary);
+        }
+
+        .user-type-card:active::after {
+            opacity: 0.05;
+        }
+
+        .user-type-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .user-type-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+            letter-spacing: -0.015em;
+        }
+
+        .user-type-desc {
+            font-size: 15px;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        /* Info Screen with Bottom Tabs */
+        .info-container {
+            min-height: 100vh;
+            padding-top: calc(56px + var(--safe-area-top));
+            padding-bottom: calc(56px + var(--safe-area-bottom));
+        }
+
+        .info-content {
+            padding: 20px 16px;
+        }
+
+        .info-card {
+            background: var(--white);
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+            letter-spacing: -0.015em;
+        }
+
+        .info-card-content {
+            font-size: 15px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .info-highlight {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFF3E0 100%);
+            border-left: 4px solid #FFA000;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(255, 160, 0, 0.1);
+        }
+
+        .info-highlight-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        /* Quick Actions - Updated for 3 columns */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f0f0f0 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-action-btn:active {
+            background: #e0e0e0;
+            transform: scale(0.98);
+        }
+
+        .quick-action-icon {
+            font-size: 24px;
+        }
+
+        /* Tab Container */
+        .tab-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            padding-bottom: var(--safe-area-bottom);
+            z-index: 90;
+        }
+
+        .tab-list {
+            display: flex;
+            height: 56px;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .tab-item.active::before {
+            width: 100%;
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .tab-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        /* Chat FAB */
+        .fab-chat {
+            position: fixed;
+            bottom: calc(76px + var(--safe-area-bottom));
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF4B4B 100%);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(230, 0, 18, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 80;
+        }
+
+        .fab-chat:active {
+            transform: scale(0.9);
+        }
+
+        .fab-chat.hide-for-tabs {
+            bottom: calc(140px + var(--safe-area-bottom));
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--light-gray);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            border-radius: 24px 24px 0 0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--light-gray);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--gray);
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:active {
+            background: #e0e0e0;
+            transform: scale(0.95);
+        }
+
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sim-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .sim-option {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sim-option.recommended {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border: 2px solid var(--secondary);
+        }
+
+        .sim-option.recommended::before {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: 12px;
+            right: -30px;
+            background: var(--secondary);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 40px;
+            transform: rotate(45deg);
+            letter-spacing: 0.05em;
+        }
+
+        .sim-duration {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .sim-data {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .sim-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .sim-features {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .purchase-steps {
+            background: #FFF8E1;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .purchase-steps-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .step-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--dark);
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: none;
+            color: var(--primary);
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: background 0.2s ease;
+        }
+
+        .back-btn:active {
+            background: var(--light-gray);
+        }
+
+        /* Responsive adjustments for larger phones */
+        @media (min-width: 375px) {
+            .hero-title {
+                font-size: 40px;
+            }
+        }
+
+        @media (min-width: 414px) {
+            .hero-title {
+                font-size: 44px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Home Screen with Hero -->
+        <div class="screen active" id="home-screen">
+            <div class="hero-container">
+                <div class="hero-header">
+                    <h1 class="header-title">Quick Launch Japan</h1>
+                    <button class="header-button js-home-menu">
+                        <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Jet-lag to jet-set in three taps</h1>
+                        <p class="hero-subtitle">Your ultimate guide to navigating Japan, from arrival to departure. Get airport-specific information, essential tips, and more.</p>
+                    </div>
+                    <button class="hero-button js-get-started">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header for other screens -->
+        <header class="header hidden" id="main-header">
+            <div class="header-content">
+                <button class="back-btn js-back">
+                    <span>←</span>
+                </button>
+                <h1 class="header-title">Quick Launch Japan</h1>
+                <button class="header-button js-menu">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                        <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- User Type Screen -->
+        <div class="screen" id="usertype-screen">
+            <div class="content-container">
+                <div class="content-padding">
+                    <div class="section-header">
+                        <h2 class="section-title">What brings you here?</h2>
+                        <p class="section-subtitle">We'll customize the information based on your needs</p>
+                    </div>
+                    
+                    <div class="user-type-grid js-usertype-grid">
+                        <!-- User type cards will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Airport Selection Screen -->
+        <div class="screen" id="airport-screen">
+            <div class="content-container">
+                <div class="content-padding">
+                    <div class="section-header">
+                        <h2 class="section-title">Select your airport</h2>
+                        <p class="section-subtitle">Choose your location for customized information</p>
+                    </div>
+                    
+                    <div class="airport-grid js-airport-grid">
+                        <!-- Airport cards will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Screen with Tabs -->
+        <div class="screen" id="info-screen">
+            <div class="info-container">
+                <div class="info-content" id="info-content">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <div class="tab-list js-tab-list">
+                    <!-- Tabs will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button for Chat -->
+        <button class="fab-chat hidden js-chat">
+            💬
+        </button>
+
+        <!-- Modal Container -->
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title">Title</h3>
+                    <button class="modal-close" id="modal-close">×</button>
+                </div>
+                <div class="modal-content" id="modal-content">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        window.app = {
+            currentScreen: 'home-screen',
+            selectedAirport: null,
+            selectedUserType: null,
+            navigationHistory: [],
+            version: '1.0.0',
+            initialized: false,
+            modalCache: {}  // Simple cache for modal content
+        };
+
+        // Airport data
+        const airports = [
+            { code: 'NRT', name: 'Narita International', city: 'Tokyo' },
+            { code: 'HND', name: 'Haneda', city: 'Tokyo' },
+            { code: 'KIX', name: 'Kansai International', city: 'Osaka' },
+            { code: 'NGO', name: 'Chubu Centrair', city: 'Nagoya' },
+            { code: 'CTS', name: 'New Chitose', city: 'Sapporo' },
+            { code: 'FUK', name: 'Fukuoka', city: 'Fukuoka' }
+        ];
+
+        // User types
+        const userTypes = [
+            { 
+                id: 'arriving', 
+                icon: '🛬', 
+                title: 'Just Arrived', 
+                desc: 'Get to the city, find SIM cards, exchange money, and start your adventure' 
+            },
+            { 
+                id: 'transit', 
+                icon: '🔄', 
+                title: 'In Transit', 
+                desc: 'Airport lounges, facilities, and activities during your layover' 
+            },
+            { 
+                id: 'departing', 
+                icon: '🛫', 
+                title: 'Departing', 
+                desc: 'Check-in counters, tax refund, and last-minute shopping tips' 
+            }
+        ];
+
+        // Tabs data
+        const tabs = [
+            { id: 'transport', icon: '🚃', label: 'Transport' },
+            { id: 'sim', icon: '📱', label: 'SIM/WiFi' },
+            { id: 'payment', icon: '💳', label: 'IC Card' },
+            { id: 'tips', icon: '💡', label: 'Tips' }
+        ];
+
+        // Initialize the app when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.app.initialized) {
+                initializeApp();
+                window.app.initialized = true;
+            }
+        });
+
+        // Utility functions
+        function getCityName(airportCode) {
+            const cityMap = {
+                'NRT': 'Tokyo',
+                'HND': 'Tokyo',
+                'KIX': 'Osaka',
+                'NGO': 'Nagoya',
+                'CTS': 'Sapporo',
+                'FUK': 'Fukuoka'
+            };
+            return cityMap[airportCode] || 'the city center';
+        }
+
+        function getLocalICCard(airportCode) {
+            const icCardMap = {
+                'KIX': 'ICOCA',
+                'NGO': 'TOICA or manaca',
+                'FUK': 'SUGOCA'
+            };
+            return icCardMap[airportCode] || 'local IC card';
+        }
+
+        function isEastJapan(airportCode) {
+            return airportCode === 'NRT' || airportCode === 'HND';
+        }
+
+        function getEscalatorSide(airportCode) {
+            return airportCode === 'KIX' || airportCode === 'NGO' ? 'right' : 'left';
+        }
+
+        // Airport transport data
+        const AIRPORT_TRANSPORT_DATA = {
+            'NRT': {
+                recommended: 'Narita Express (N\'EX) - Fastest to major Tokyo stations',
+                trains: {
+                    'Narita Express (N\'EX)': [
+                        { route: 'To Tokyo', time: '60 min', price: '¥3,070' },
+                        { route: 'To Shinjuku', time: '85 min', price: '¥3,250' },
+                        { route: 'To Yokohama', time: '90 min', price: '¥4,370' }
+                    ],
+                    'Keisei Skyliner': [
+                        { route: 'To Ueno', time: '41 min', price: '¥2,570' },
+                        { route: 'To Nippori', time: '36 min', price: '¥2,570' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Tokyo Station', fare: '¥20,000-25,000' },
+                    { destination: 'Shinjuku', fare: '¥22,000-27,000' },
+                    { destination: 'Shibuya', fare: '¥23,000-28,000' },
+                    { destination: 'Asakusa', fare: '¥19,000-24,000' }
+                ],
+                taxiNote: 'Fixed fare zones available'
+            },
+            'HND': {
+                recommended: 'Tokyo Monorail or Keikyu Line - Quick access to central Tokyo',
+                trains: {
+                    'Tokyo Monorail': [
+                        { route: 'To Hamamatsucho', time: '13-20 min', price: '¥500' },
+                        { route: 'Connect to JR Yamanote Line', time: '', price: '' }
+                    ],
+                    'Keikyu Line': [
+                        { route: 'To Shinagawa', time: '11-15 min', price: '¥300' },
+                        { route: 'To Yokohama', time: '30 min', price: '¥480' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Tokyo Station', fare: '¥6,000-8,000' },
+                    { destination: 'Shinjuku', fare: '¥7,000-9,000' },
+                    { destination: 'Shibuya', fare: '¥6,500-8,500' },
+                    { destination: 'Yokohama', fare: '¥8,000-10,000' }
+                ],
+                taxiNote: 'Fixed fare: ¥5,700-8,900 (depends on zone)'
+            },
+            'KIX': {
+                recommended: 'Nankai Rapid or JR Haruka - Direct to Osaka city center',
+                trains: {
+                    'JR Haruka Express': [
+                        { route: 'To Osaka', time: '50 min', price: '¥2,900' },
+                        { route: 'To Kyoto', time: '75 min', price: '¥3,640' }
+                    ],
+                    'Nankai Rapid': [
+                        { route: 'To Namba', time: '45 min', price: '¥930' },
+                        { route: 'Most economical option', time: '', price: '' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Osaka/Umeda', fare: '¥15,000-18,000' },
+                    { destination: 'Namba', fare: '¥14,000-16,000' },
+                    { destination: 'Kyoto', fare: '¥35,000-40,000' },
+                    { destination: 'Kobe', fare: '¥20,000-25,000' }
+                ],
+                taxiNote: 'Fixed fare available to some areas'
+            },
+            'NGO': {
+                recommended: 'Meitetsu μ-SKY Limited Express - Non-stop to Nagoya',
+                trains: {
+                    'Express Train': [
+                        { route: 'Direct service to city center', time: '', price: '' },
+                        { route: 'Check timetables at station', time: '', price: '' },
+                        { route: 'Journey time: 30-60 minutes', time: '', price: '' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Nagoya Station', fare: '¥12,000-15,000' },
+                    { destination: 'Sakae', fare: '¥13,000-16,000' },
+                    { destination: 'Toyota City', fare: '¥20,000-25,000' }
+                ],
+                taxiNote: ''
+            },
+            'CTS': {
+                recommended: 'JR Rapid Airport - Direct to Sapporo Station',
+                trains: {
+                    'Express Train': [
+                        { route: 'Direct service to city center', time: '', price: '' },
+                        { route: 'Check timetables at station', time: '', price: '' },
+                        { route: 'Journey time: 30-60 minutes', time: '', price: '' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Sapporo Station', fare: '¥10,000-13,000' },
+                    { destination: 'Susukino', fare: '¥11,000-14,000' },
+                    { destination: 'Otaru', fare: '¥25,000-30,000' }
+                ],
+                taxiNote: ''
+            },
+            'FUK': {
+                recommended: 'Subway Airport Line - Quick and affordable',
+                trains: {
+                    'Express Train': [
+                        { route: 'Direct service to city center', time: '', price: '' },
+                        { route: 'Check timetables at station', time: '', price: '' },
+                        { route: 'Journey time: 30-60 minutes', time: '', price: '' }
+                    ]
+                },
+                taxiFares: [
+                    { destination: 'Hakata Station', fare: '¥2,000-2,500' },
+                    { destination: 'Tenjin', fare: '¥2,500-3,000' }
+                ],
+                taxiNote: 'Very close to city!'
+            }
+        };
+
+        function initializeApp() {
+            // Generate dynamic content
+            generateAirportCards();
+            generateUserTypeCards();
+            generateTabs();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Initialize UI
+            updateUIForScreen('home-screen');
+        }
+
+        function generateAirportCards() {
+            const container = document.querySelector('.js-airport-grid');
+            if (!container) return;
+            
+            container.innerHTML = airports.map(airport => `
+                <div class="airport-card" data-airport="${airport.code}">
+                    <div class="airport-info">
+                        <div class="airport-code">${airport.code}</div>
+                        <div class="airport-name">${airport.name}</div>
+                        <div class="airport-city">${airport.city}</div>
+                    </div>
+                    <div class="airport-arrow">›</div>
+                </div>
+            `).join('');
+        }
+
+        function generateUserTypeCards() {
+            const container = document.querySelector('.js-usertype-grid');
+            if (!container) return;
+            
+            container.innerHTML = userTypes.map(type => `
+                <div class="user-type-card" data-usertype="${type.id}">
+                    <div class="user-type-icon">${type.icon}</div>
+                    <h3 class="user-type-title">${type.title}</h3>
+                    <p class="user-type-desc">${type.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function generateTabs() {
+            const container = document.querySelector('.js-tab-list');
+            if (!container) return;
+            
+            container.innerHTML = tabs.map((tab, index) => `
+                <div class="tab-item ${index === 0 ? 'active' : ''}" data-tab="${tab.id}">
+                    <span class="tab-icon">${tab.icon}</span>
+                    <span class="tab-label">${tab.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function setupEventListeners() {
+            // Get Started button
+            const getStartedBtn = document.querySelector('.js-get-started');
+            if (getStartedBtn) {
+                getStartedBtn.addEventListener('click', () => {
+                    navigateTo('usertype-screen');
+                });
+            }
+
+            // Back button
+            const backBtn = document.querySelector('.js-back');
+            if (backBtn) {
+                backBtn.addEventListener('click', navigateBack);
+            }
+
+            // Menu buttons
+            const menuBtn = document.querySelector('.js-menu');
+            if (menuBtn) {
+                menuBtn.addEventListener('click', openMenu);
+            }
+            
+            const homeMenuBtn = document.querySelector('.js-home-menu');
+            if (homeMenuBtn) {
+                homeMenuBtn.addEventListener('click', openMenu);
+            }
+
+            // User type cards (using event delegation)
+            const userTypeGrid = document.querySelector('.js-usertype-grid');
+            if (userTypeGrid) {
+                userTypeGrid.addEventListener('click', (e) => {
+                    const card = e.target.closest('.user-type-card');
+                    if (card) {
+                        const userType = card.dataset.usertype;
+                        selectUserType(userType);
+                    }
+                });
+                // Add passive touch listeners for better scrolling performance
+                userTypeGrid.addEventListener('touchstart', () => {}, { passive: true });
+                userTypeGrid.addEventListener('touchmove', () => {}, { passive: true });
+            }
+
+            // Airport cards (using event delegation)
+            const airportGrid = document.querySelector('.js-airport-grid');
+            if (airportGrid) {
+                airportGrid.addEventListener('click', (e) => {
+                    const card = e.target.closest('.airport-card');
+                    if (card) {
+                        const airportCode = card.dataset.airport;
+                        selectAirport(airportCode);
+                    }
+                });
+                // Add passive touch listeners for better scrolling performance
+                airportGrid.addEventListener('touchstart', () => {}, { passive: true });
+                airportGrid.addEventListener('touchmove', () => {}, { passive: true });
+            }
+
+            // Tab items (using event delegation)
+            const tabList = document.querySelector('.js-tab-list');
+            if (tabList) {
+                tabList.addEventListener('click', (e) => {
+                    const tab = e.target.closest('.tab-item');
+                    if (tab) {
+                        const tabName = tab.dataset.tab;
+                        switchTab(tabName);
+                    }
+                });
+            }
+
+            // Chat FAB
+            const chatBtn = document.querySelector('.js-chat');
+            if (chatBtn) {
+                chatBtn.addEventListener('click', openChat);
+            }
+
+            // Quick action buttons (for modals)
+            document.addEventListener('click', (e) => {
+                const quickActionBtn = e.target.closest('.quick-action-btn[data-modal]');
+                if (quickActionBtn) {
+                    const modalType = quickActionBtn.dataset.modal;
+                    openModal(modalType);
+                }
+            });
+
+            // Modal close button
+            const modalClose = document.getElementById('modal-close');
+            if (modalClose) {
+                modalClose.addEventListener('click', closeModal);
+            }
+
+            // Modal overlay click to close
+            const modalOverlay = document.getElementById('modal-overlay');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeModal();
+                    }
+                });
+            }
+        }
+
+        // Navigation functions
+        function navigateTo(screenId) {
+            const currentScreenEl = document.getElementById(window.app.currentScreen);
+            const targetScreen = document.getElementById(screenId);
+            
+            if (!targetScreen) {
+                console.error('Screen not found:', screenId);
+                return;
+            }
+            
+            // Hide current screen
+            if (currentScreenEl) {
+                currentScreenEl.classList.remove('active');
+            }
+            
+            // Push to history
+            window.app.navigationHistory.push(window.app.currentScreen);
+            
+            // Show new screen
+            window.app.currentScreen = screenId;
+            targetScreen.classList.add('active');
+            
+            // Update UI
+            updateUIForScreen(screenId);
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function navigateBack() {
+            if (window.app.navigationHistory.length > 0) {
+                const previousScreen = window.app.navigationHistory.pop();
+                const currentScreenEl = document.getElementById(window.app.currentScreen);
+                const previousScreenEl = document.getElementById(previousScreen);
+                
+                if (currentScreenEl) currentScreenEl.classList.remove('active');
+                window.app.currentScreen = previousScreen;
+                if (previousScreenEl) previousScreenEl.classList.add('active');
+                
+                updateUIForScreen(previousScreen);
+            }
+        }
+
+        function updateUIForScreen(screenId) {
+            const mainHeader = document.getElementById('main-header');
+            const fabChat = document.querySelector('.js-chat');
+            
+            if (screenId === 'home-screen') {
+                mainHeader.classList.add('hidden');
+                fabChat.classList.add('hidden');
+            } else {
+                mainHeader.classList.remove('hidden');
+                
+                if (screenId === 'info-screen') {
+                    fabChat.classList.remove('hidden');
+                    fabChat.classList.add('hide-for-tabs');
+                } else {
+                    fabChat.classList.add('hidden');
+                }
+            }
+        }
+
+        // Selection functions
+        function selectUserType(userType) {
+            window.app.selectedUserType = userType;
+            
+            // Update airport screen subtitle based on user type
+            const airportScreen = document.getElementById('airport-screen');
+            if (airportScreen) {
+                const subtitle = airportScreen.querySelector('.section-subtitle');
+                if (subtitle) {
+                    subtitle.textContent = userType === 'arriving' ? 
+                        'Where did you arrive?' : 
+                        'Which airport are you at?';
+                }
+            }
+            
+            navigateTo('airport-screen');
+        }
+
+        function selectAirport(airportCode) {
+            window.app.selectedAirport = airportCode;
+            navigateTo('info-screen');
+            loadContentForUserType();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            // Load content for tab
+            loadTabContent(tabName);
+        }
+
+        // Content loading functions
+        function loadContentForUserType() {
+            // Load content based on user type
+            if (window.app.selectedUserType === 'arriving') {
+                loadTabContent('transport');
+            } else {
+                // Transit/Departing users might want different initial content
+                loadTabContent('tips');
+            }
+        }
+
+        function loadTabContent(tabName) {
+            const contentArea = document.getElementById('info-content');
+            
+            // Show loading state
+            contentArea.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
+            // Load content immediately without delay
+            const contentGenerators = {
+                transport: getTransportContent,
+                sim: getSimContent,
+                payment: getPaymentContent,
+                tips: getTipsContent
+            };
+            
+            const generator = contentGenerators[tabName];
+            if (generator) {
+                contentArea.innerHTML = generator();
+            }
+        }
+
+        // Content templates
+        function getTransportContent() {
+            const cityName = getCityName(window.app.selectedAirport);
+
+            return `
+                <div class="info-card">
+                    <h3 class="info-card-title">Getting to ${cityName}</h3>
+                    <div class="info-card-content">
+                        Fast and efficient options to reach ${cityName} from ${window.app.selectedAirport}.
+                    </div>
+                </div>
+
+                <div class="info-highlight">
+                    <div class="info-highlight-title">💡 Recommended Option</div>
+                    <div>${getRecommendedTransport()}</div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(window.app.selectedAirport + ' airport station')}', '_blank')">
+                        <span class="quick-action-icon">🗺️</span>
+                        <span>Navigate</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="platform-guide">
+                        <span class="quick-action-icon">🚪</span>
+                        <span>Platform Guide</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="how-to-buy">
+                        <span class="quick-action-icon">🎫</span>
+                        <span>How to Buy</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Train Options</h3>
+                    <div class="info-card-content">
+                        ${getTrainOptions()}
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Airport Bus</h3>
+                    <div class="info-card-content">
+                        • Direct service to major areas<br>
+                        • No transfers needed<br>
+                        • Luggage handled for you<br>
+                        • Journey time: 60-120 minutes<br>
+                        • Cost: ¥1,000-3,500<br><br>
+                        
+                        <strong>How to buy tickets:</strong><br>
+                        • Airport bus counter (after customs)<br>
+                        • Ticket machines near bus stops<br>
+                        • Online (some routes)<br>
+                        • Pay driver directly (some routes)
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Taxi</h3>
+                    <div class="info-card-content">
+                        <strong>Most convenient but expensive option</strong><br><br>
+                        
+                        <strong>Approximate fares from ${window.app.selectedAirport}:</strong><br>
+                        ${getTaxiFares()}<br><br>
+                        
+                        <strong>Tips:</strong><br>
+                        • Fixed fare available to some areas<br>
+                        • Credit cards accepted in most taxis<br>
+                        • No tipping required<br>
+                        • Show address in Japanese if possible<br>
+                        • Late night surcharge: +20% (22:00-5:00)
+                    </div>
+                </div>
+            `;
+        }
+
+        function getRecommendedTransport() {
+            const data = AIRPORT_TRANSPORT_DATA[window.app.selectedAirport];
+            return data ? data.recommended : 'Express train service available';
+        }
+
+        function getTaxiFares() {
+            const data = AIRPORT_TRANSPORT_DATA[window.app.selectedAirport];
+            if (!data || !data.taxiFares) {
+                return '• City center: Check with driver<br>• Typical range: ¥10,000-30,000';
+            }
+            
+            let fareHtml = data.taxiFares.map(fare => 
+                `• ${fare.destination}: ${fare.fare}`
+            ).join('<br>');
+            
+            if (data.taxiNote) {
+                fareHtml += `<br>• ${data.taxiNote}`;
+            }
+            
+            return fareHtml;
+        }
+
+        function getTrainOptions() {
+            const data = AIRPORT_TRANSPORT_DATA[window.app.selectedAirport];
+            if (!data || !data.trains) {
+                return `<strong>Express Train</strong><br>
+                    • Direct service to city center<br>
+                    • Check timetables at station<br>
+                    • Journey time: 30-60 minutes`;
+            }
+            
+            let trainHtml = '';
+            for (const [trainName, routes] of Object.entries(data.trains)) {
+                trainHtml += `<strong>${trainName}</strong><br>`;
+                routes.forEach(route => {
+                    if (route.time && route.price) {
+                        trainHtml += `• ${route.route}: ${route.time} (${route.price})<br>`;
+                    } else if (route.route) {
+                        trainHtml += `• ${route.route}<br>`;
+                    }
+                });
+                trainHtml += '<br>';
+            }
+            
+            return trainHtml.slice(0, -4); // Remove last <br>
+        }
+
+        function getSimContent() {
+            return `
+                <div class="info-card">
+                    <h3 class="info-card-title">Stay Connected in Japan</h3>
+                    <div class="info-card-content">
+                        Get online immediately with SIM cards or pocket WiFi available at ${window.app.selectedAirport}.
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action-btn" data-modal="sim-cards">
+                        <span class="quick-action-icon">📱</span>
+                        <span>SIM Cards</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="pocket-wifi">
+                        <span class="quick-action-icon">📶</span>
+                        <span>Pocket WiFi</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="esim-setup">
+                        <span class="quick-action-icon">💬</span>
+                        <span>eSIM Setup</span>
+                    </div>
+                </div>
+
+                <div class="info-highlight">
+                    <div class="info-highlight-title">🌐 Free WiFi Available</div>
+                    <div>Connect to "${window.app.selectedAirport}_Free_WiFi" throughout the airport while you decide on your data plan.</div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Tourist SIM Cards</h3>
+                    <div class="info-card-content">
+                        <strong>Available Options:</strong><br>
+                        • 7 days - 3GB data (¥3,000)<br>
+                        • 14 days - 7GB data (¥4,000)<br>
+                        • 30 days - 10GB data (¥5,000)<br><br>
+                        
+                        <strong>Where to buy:</strong><br>
+                        • Airport convenience stores<br>
+                        • Electronics shops in arrival hall<br>
+                        • Vending machines near baggage claim
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Pocket WiFi Rental</h3>
+                    <div class="info-card-content">
+                        • Unlimited data plans available<br>
+                        • Connect 5-10 devices<br>
+                        • Battery lasts 8-12 hours<br>
+                        • From ¥800/day<br>
+                        • Return at any major airport
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">eSIM Digital Plans</h3>
+                    <div class="info-card-content">
+                        • Instant activation - no physical card<br>
+                        • Keep your home SIM active<br>
+                        • Plans from $4.50 (1GB/7days)<br>
+                        • Unlimited options available<br>
+                        • Compatible with newer smartphones
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPaymentContent() {
+            // 東日本エリアの空港かどうかを判定
+            const isEastJapanAirport = isEastJapan(window.app.selectedAirport);
+            const isWestJapan = window.app.selectedAirport === 'KIX' || window.app.selectedAirport === 'NGO' || window.app.selectedAirport === 'FUK';
+            
+            // 西日本の場合の注意メッセージ
+            const westJapanNotice = isWestJapan ? `
+                <div class="info-highlight" style="background: #FFF3E0; border-left-color: #FF6F00;">
+                    <div class="info-highlight-title">⚠️ Important for ${window.app.selectedAirport} Arrivals</div>
+                    <div>Welcome Suica cards are only sold in East Japan (Tokyo area). At ${window.app.selectedAirport}, you can:
+                        <br>• Use Welcome Suica Mobile app (iPhone only)
+                        <br>• Buy local IC card: ${getLocalICCard(window.app.selectedAirport)} (similar to Suica)</div>
+                </div>
+            ` : '';
+
+            return `
+                <div class="info-card">
+                    <h3 class="info-card-title">Choose Your IC Card Option</h3>
+                    <div class="info-card-content">
+                        Get your travel pass for trains, buses, shopping, and more. ${isWestJapan ? 'Note: Limited options outside Tokyo area.' : 'Two convenient options available!'}
+                    </div>
+                </div>
+
+                ${westJapanNotice}
+
+                <!-- Option Cards -->
+                <div style="display: flex; flex-direction: column; gap: 16px; margin: 20px 0;">
+                    <!-- Physical Welcome Suica Card Option -->
+                    <div style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1); ${!isEastJapanAirport ? 'opacity: 0.7;' : ''}">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <span style="font-size: 40px;">💳</span>
+                            <div>
+                                <h4 style="font-size: 22px; font-weight: 700; margin: 0; color: #2E7D32;">Welcome Suica Card</h4>
+                                <p style="font-size: 14px; color: #388E3C; margin: 4px 0 0 0;">Physical IC card for tourists${!isEastJapan ? ' (Not available here)' : ''}</p>
+                            </div>
+                        </div>
+                        
+                        ${isEastJapan ? `
+                        <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <p style="margin: 0 0 12px 0; font-weight: 600;">✅ Best for:</p>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                                <li>Android users (no app available)</li>
+                                <li>Those who want a souvenir card</li>
+                                <li>People without smartphones</li>
+                                <li>Backup payment method</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: rgba(255,255,255,0.9); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <p style="margin: 0 0 8px 0; font-weight: 600;">👎 Drawbacks:</p>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 1.6; color: #666;">
+                                <li>Need to carry physical card</li>
+                                <li>Cash-only top-up at stations</li>
+                                <li>Can be lost or forgotten</li>
+                                <li>Expires in 28 days (no refund)</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: rgba(255,255,255,0.7); border-radius: 12px; padding: 16px;">
+                            <p style="margin: 0 0 8px 0; font-weight: 600;">📍 Where to buy at ${window.app.selectedAirport}:</p>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+                                ${window.app.selectedAirport === 'NRT' ? 
+                                    `<li>Terminal 1 & 2: JR EAST Travel Service Center</li>
+                                     <li>Terminal 3: Welcome Suica vending machines</li>` :
+                                    `<li>Terminal 3: JR EAST Travel Service Center</li>
+                                     <li>Tokyo Monorail station: Vending machines</li>`
+                                }
+                                <li>Price: ¥1,000-10,000 (no deposit)</li>
+                                <li>Limit: 1 card per person</li>
+                            </ul>
+                            <p style="margin: 12px 0 0 0; font-size: 13px; color: #666;">
+                                <strong>Also available:</strong> Tokyo, Shibuya, Shinjuku, Ikebukuro stations
+                            </p>
+                        </div>
+                        ` : `
+                        <div style="background: rgba(255,255,255,0.9); border-radius: 12px; padding: 16px;">
+                            <p style="margin: 0; font-weight: 600; color: #BF360C;">❌ Not Available at ${window.app.selectedAirport}</p>
+                            <p style="margin: 8px 0 0 0; color: #666;">Welcome Suica is only sold in East Japan (Tokyo area). Consider the mobile app or local IC cards instead.</p>
+                        </div>
+                        `}
+                    </div>
+
+                    <!-- Welcome Suica Mobile Option -->
+                    <div style="background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(33, 150, 243, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <span style="font-size: 40px;">📱</span>
+                            <div>
+                                <h4 style="font-size: 22px; font-weight: 700; margin: 0; color: #1565C0;">Welcome Suica Mobile</h4>
+                                <p style="font-size: 14px; color: #1976D2; margin: 4px 0 0 0;">Digital card in your iPhone${isWestJapan ? ' (Works everywhere!)' : ''}</p>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <p style="margin: 0 0 12px 0; font-weight: 600;">✅ Best for:</p>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                                <li>iPhone users (iOS 17.2+)</li>
+                                <li>Instant setup before/after arrival</li>
+                                <li>No physical card needed</li>
+                                <li>Valid for 180 days (vs 28 days)</li>
+                                <li>Works all across Japan</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: #FFF3E0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <p style="margin: 0; font-weight: 600; color: #E65100;">⚠️ Important:</p>
+                            <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #BF360C;">
+                                <li>New app (March 2025) - may have bugs</li>
+                                <li>Balance expires after 180 days (no refund)</li>
+                                <li>Android not supported</li>
+                                <li>May need to be in Japan to activate</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: rgba(255,255,255,0.7); border-radius: 12px; padding: 16px;">
+                            <p style="margin: 0 0 8px 0; font-weight: 600;">📲 How to set up:</p>
+                            <ol style="margin: 0; padding-left: 20px; line-height: 1.8;">
+                                <li>Download "Welcome Suica Mobile" from App Store</li>
+                                <li>Add to Apple Wallet</li>
+                                <li>Top up with Apple Pay (credit card)</li>
+                                <li>Ready to tap and go!</li>
+                            </ol>
+                            <a href="https://apps.apple.com/app/welcome-suica-mobile/id6738336566" 
+                               style="display: inline-block; margin-top: 12px; padding: 10px 20px; background: #000; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                Download on App Store →
+                            </a>
+                        </div>
+                    </div>
+
+                    ${isWestJapan ? `
+                    <!-- Local IC Card Option for West Japan -->
+                    <div style="background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%); border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(156, 39, 176, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <span style="font-size: 40px;">🎫</span>
+                            <div>
+                                <h4 style="font-size: 22px; font-weight: 700; margin: 0; color: #6A1B9A;">Local IC Card</h4>
+                                <p style="font-size: 14px; color: #7B1FA2; margin: 4px 0 0 0;">${getLocalICCard(window.app.selectedAirport)} - Works like Suica!</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 12px; padding: 16px;">
+                            <p style="margin: 0 0 12px 0; font-weight: 600;">📍 Available at ${window.app.selectedAirport}:</p>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                                <li>Station ticket machines</li>
+                                <li>Works nationwide (compatible with Suica)</li>
+                                <li>Similar features to Welcome Suica</li>
+                                <li>May require deposit (¥500)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- Alternative Option -->
+                <div class="info-highlight">
+                    <div class="info-highlight-title">💡 Pro Tip: Regular Suica in Apple Wallet</div>
+                    <div>iPhone users can also add a regular Suica directly to Apple Wallet (no app needed). This doesn't expire and works exactly like the physical card. Go to Wallet → Add → Transit Card → Suica.</div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action-btn" data-modal="top-up-guide">
+                        <span class="quick-action-icon">💰</span>
+                        <span>Top-up Guide</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="where-to-use">
+                        <span class="quick-action-icon">🏪</span>
+                        <span>Where to Use</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Quick Comparison</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;"></th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Welcome Suica<br>(Physical)</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Welcome Suica<br>(Mobile)</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 600;">Top-up</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">Cash only</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">Credit card</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 600;">Device</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">None needed</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">iPhone only</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 600;">Validity</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">28 days</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">180 days</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 600;">Where to buy</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">${isEastJapan ? 'Airport/Station' : 'Not available'}</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #eee;">App Store</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; font-weight: 600;">Refund</td>
+                                <td style="padding: 12px;">No</td>
+                                <td style="padding: 12px;">No</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTipsContent() {
+            return `
+                <div class="info-card">
+                    <h3 class="info-card-title">Essential First-Timer Tips</h3>
+                    <div class="info-card-content">
+                        Everything you need to know for a smooth start to your Japan adventure.
+                    </div>
+                </div>
+
+                <div class="info-highlight">
+                    <div class="info-highlight-title">🚇 Avoid Rush Hours</div>
+                    <div>Skip trains during 7-9 AM and 5-7 PM on weekdays if you have large luggage. Your future self will thank you!</div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action-btn">
+                        <span class="quick-action-icon">🏧</span>
+                        <span>Find ATMs</span>
+                    </div>
+                    <div class="quick-action-btn">
+                        <span class="quick-action-icon">🍜</span>
+                        <span>Food Courts</span>
+                    </div>
+                    <div class="quick-action-btn">
+                        <span class="quick-action-icon">🚻</span>
+                        <span>Facilities</span>
+                    </div>
+                    <div class="quick-action-btn">
+                        <span class="quick-action-icon">📞</span>
+                        <span>Emergency</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Money Matters</h3>
+                    <div class="info-card-content">
+                        • <strong>Cash is still king</strong> - Many places only accept cash<br>
+                        • <strong>7-Eleven ATMs</strong> - Your best friend for foreign cards<br>
+                        • <strong>No tipping</strong> - It's not customary and can be offensive<br>
+                        • <strong>Tax-free shopping</strong> - Available at major stores (min ¥5,000)
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Getting Around</h3>
+                    <div class="info-card-content">
+                        • <strong>Google Maps works great</strong> - Shows platform numbers too<br>
+                        • <strong>Stand on the ${getEscalatorSide(window.app.selectedAirport)}</strong> - On escalators<br>
+                        • <strong>Priority seats</strong> - For elderly, pregnant, or disabled<br>
+                        • <strong>Quiet on trains</strong> - No phone calls, eat/drink discretely
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">Cultural Quick Tips</h3>
+                    <div class="info-card-content">
+                        • <strong>Shoes off</strong> - In temples, ryokans, some restaurants<br>
+                        • <strong>Bow, don't shake</strong> - A slight nod is perfect<br>
+                        • <strong>Two hands</strong> - When giving/receiving items<br>
+                        • <strong>Slurp your noodles</strong> - It's polite and shows enjoyment!
+                    </div>
+                </div>
+            `;
+        }
+
+        // UI interaction functions
+        function openMenu() {
+            alert('Menu functionality coming soon! Here you\'ll find settings, saved information, and more features.');
+        }
+
+        function openChat() {
+            alert('AI Travel Assistant coming soon! Get instant answers to all your Japan travel questions.');
+        }
+
+        // Modal functions
+        function openModal(type) {
+            const overlay = document.getElementById('modal-overlay');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+            
+            // Check cache first
+            const cacheKey = `${type}_${window.app.selectedAirport}`;
+            if (!window.app.modalCache[cacheKey]) {
+                // Generate and cache content
+                switch(type) {
+                    case 'sim-cards':
+                        title.textContent = 'Tourist SIM Cards';
+                        window.app.modalCache[cacheKey] = getSIMCardsModalContent();
+                        break;
+                    case 'pocket-wifi':
+                        title.textContent = 'Pocket WiFi Rental';
+                        window.app.modalCache[cacheKey] = getPocketWiFiModalContent();
+                        break;
+                    case 'esim-setup':
+                        title.textContent = 'eSIM Setup Guide';
+                        window.app.modalCache[cacheKey] = getESIMSetupModalContent();
+                        break;
+                    case 'platform-guide':
+                        title.textContent = 'Platform Guide';
+                        window.app.modalCache[cacheKey] = getPlatformGuideModalContent();
+                        break;
+                    case 'how-to-buy':
+                        title.textContent = 'How to Buy Tickets';
+                        window.app.modalCache[cacheKey] = getHowToBuyModalContent();
+                        break;
+                    case 'where-to-use':
+                        title.textContent = 'Where IC Cards Work';
+                        window.app.modalCache[cacheKey] = getWhereToUseModalContent();
+                        break;
+                    case 'top-up-guide':
+                        title.textContent = 'Top-up Guide';
+                        window.app.modalCache[cacheKey] = getTopUpGuideModalContent();
+                        break;
+                }
+            } else {
+                // Use cached content
+                switch(type) {
+                    case 'sim-cards':
+                        title.textContent = 'Tourist SIM Cards';
+                        break;
+                    case 'pocket-wifi':
+                        title.textContent = 'Pocket WiFi Rental';
+                        break;
+                    case 'esim-setup':
+                        title.textContent = 'eSIM Setup Guide';
+                        break;
+                    case 'platform-guide':
+                        title.textContent = 'Platform Guide';
+                        break;
+                    case 'how-to-buy':
+                        title.textContent = 'How to Buy Tickets';
+                        break;
+                    case 'where-to-use':
+                        title.textContent = 'Where IC Cards Work';
+                        break;
+                    case 'top-up-guide':
+                        title.textContent = 'Top-up Guide';
+                        break;
+                }
+            }
+            
+            // Set content from cache
+            content.innerHTML = window.app.modalCache[cacheKey];
+            
+            // Show modal
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function getSIMCardsModalContent() {
+            // 空港別のSIM購入場所データ
+            const airportSIMLocations = {
+                'NRT': {
+                    name: 'Narita International Airport',
+                    locations: [
+                        {
+                            name: 'JAL ABC Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 North Wing 1F (Arrival Lobby)', 'Terminal 2 1F (Arrival Lobby)'],
+                            hours: '6:30 - Last flight + 1hr',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'SIM Card Vending Machines',
+                            icon: '🤖',
+                            terminals: ['Terminal 1'],
+                            hours: '24 hours',
+                            type: 'vending'
+                        },
+                        {
+                            name: 'GTN Mobile Pickup Counter',
+                            icon: '📦',
+                            terminals: ['Terminal 1 Travel Center', 'Terminal 2 Meeting Service Counter'],
+                            hours: 'Check with provider',
+                            type: 'pickup',
+                            note: 'Pre-order required'
+                        }
+                    ]
+                },
+                'HND': {
+                    name: 'Haneda Airport',
+                    locations: [
+                        {
+                            name: 'AnyFone JAPAN Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 3 2F (Arrival Lobby)'],
+                            hours: '6:00 - 23:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'Mobile Center (Telecom Square)',
+                            icon: '🏪',
+                            terminals: ['Terminal 3 2F (Arrival Lobby)'],
+                            hours: '6:30 - 23:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'JP SMART SIM Pickup',
+                            icon: '📦',
+                            terminals: ['Terminal 3 Meeting Service Counter'],
+                            hours: 'Check with provider',
+                            type: 'pickup',
+                            note: 'Pre-order required'
+                        }
+                    ]
+                },
+                'KIX': {
+                    name: 'Kansai International Airport',
+                    locations: [
+                        {
+                            name: 'Global WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 1F North Area', 'Terminal 1 4F North Area'],
+                            hours: '6:00 - 23:00 (1F) / 6:30 - 23:00 (4F)',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'SIM Card Vending Machines',
+                            icon: '🤖',
+                            terminals: ['Terminal 1 1F'],
+                            hours: '24 hours',
+                            type: 'vending'
+                        },
+                        {
+                            name: 'Kansai Tourist Information Center',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 1F'],
+                            hours: '9:00 - 19:00',
+                            type: 'counter'
+                        }
+                    ]
+                },
+                'NGO': {
+                    name: 'Chubu Centrair Airport',
+                    locations: [
+                        {
+                            name: 'Global WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 2F (Arrival Lobby)'],
+                            hours: '7:00 - 22:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'SIM Card Vending Machines',
+                            icon: '🤖',
+                            terminals: ['Terminal 1'],
+                            hours: '24 hours',
+                            type: 'vending'
+                        }
+                    ]
+                },
+                'CTS': {
+                    name: 'New Chitose Airport',
+                    locations: [
+                        {
+                            name: 'Global WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Domestic Terminal 2F'],
+                            hours: '8:00 - 20:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'SIM Card Vending Machines',
+                            icon: '🤖',
+                            terminals: ['Domestic Terminal 2F'],
+                            hours: '24 hours',
+                            type: 'vending'
+                        }
+                    ]
+                },
+                'FUK': {
+                    name: 'Fukuoka Airport',
+                    locations: [
+                        {
+                            name: 'Telecom Square Counter',
+                            icon: '🏪',
+                            terminals: ['International Terminal 1F'],
+                            hours: '7:00 - 21:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'Sakura Mobile Counter',
+                            icon: '🏪',
+                            terminals: ['International Terminal 1F'],
+                            hours: '7:00 - 21:00',
+                            type: 'counter'
+                        },
+                        {
+                            name: 'SIM Card Vending Machines',
+                            icon: '🤖',
+                            terminals: ['International Terminal'],
+                            hours: '24 hours',
+                            type: 'vending'
+                        }
+                    ]
+                }
+            };
+
+            const selectedAirport = window.app.selectedAirport || 'NRT';
+            const airportInfo = airportSIMLocations[selectedAirport];
+
+            return `
+                <div class="info-highlight" style="background: #E3F2FD; border-left-color: #1976D2; margin-bottom: 20px;">
+                    <div class="info-highlight-title" style="color: #1565C0;">💡 Price Reference Only</div>
+                    <div style="color: #1565C0;">Actual prices may vary by location. The following are typical price ranges for reference.</div>
+                </div>
+
+                <div class="sim-options">
+                    <div class="sim-option">
+                        <div class="sim-duration">7 Days</div>
+                        <div class="sim-data">3GB Data</div>
+                        <div class="sim-price">¥3,000</div>
+                        <div class="sim-features">
+                            • Perfect for short trips<br>
+                            • 4G LTE speed<br>
+                            • No phone calls
+                        </div>
+                    </div>
+
+                    <div class="sim-option recommended">
+                        <div class="sim-duration">14 Days</div>
+                        <div class="sim-data">7GB Data</div>
+                        <div class="sim-price">¥4,000</div>
+                        <div class="sim-features">
+                            • Most popular choice<br>
+                            • Best value for money<br>
+                            • Plenty of data for maps & social media
+                        </div>
+                    </div>
+
+                    <div class="sim-option">
+                        <div class="sim-duration">30 Days</div>
+                        <div class="sim-data">10GB Data</div>
+                        <div class="sim-price">¥5,000</div>
+                        <div class="sim-features">
+                            • Extended stays<br>
+                            • Heavy data users<br>
+                            • Can be shared via hotspot
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f5f5f5; border-radius: 16px; padding: 20px; margin: 24px 0;">
+                    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--dark);">
+                        📍 Where to Buy at ${airportInfo.name}
+                    </h4>
+                    
+                    ${airportInfo.locations.map(location => `
+                        <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <span style="font-size: 28px;">${location.icon}</span>
+                                <div style="flex: 1;">
+                                    <h5 style="font-size: 16px; font-weight: 700; margin: 0; color: var(--dark);">${location.name}</h5>
+                                    ${location.note ? `<p style="font-size: 13px; color: #FF6F00; margin: 4px 0 0 0;">⚠️ ${location.note}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-left: 40px;">
+                                ${location.terminals.map(terminal => `
+                                    <div style="font-size: 14px; color: var(--gray); margin-bottom: 4px;">
+                                        • ${terminal}
+                                    </div>
+                                `).join('')}
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                                    <span style="font-size: 16px;">⏰</span>
+                                    <span style="font-size: 14px; font-weight: 600; color: ${location.hours === '24 hours' ? '#4CAF50' : 'var(--dark)'};">
+                                        ${location.hours}
+                                    </span>
+                                    ${location.hours === '24 hours' ? '<span style="background: #4CAF50; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 8px;">24/7</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="purchase-steps">
+                    <h4 class="purchase-steps-title">What You'll Need</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Passport (required by law for all SIM purchases)</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Unlocked smartphone (check with your carrier before travel)</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Payment method (cash or credit card - varies by location)</div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">💡 Pro Tips</h3>
+                    <div class="info-card-content">
+                        • <strong>24-hour vending machines:</strong> Perfect for late arrivals<br>
+                        • <strong>Counter staff:</strong> Can help with setup if needed<br>
+                        • <strong>Pre-order online:</strong> Some providers offer pickup service<br>
+                        • <strong>Keep your home SIM:</strong> Store it safely during your trip
+                    </div>
+                </div>
+            `;
+        }
+
+        function getESIMSetupModalContent() {
+            // 空港別のeSIM購入場所データ
+            const airportESIMLocations = {
+                'NRT': {
+                    name: 'Narita International Airport',
+                    locations: [
+                        {
+                            name: 'J WiFi & Mobile® Kiosk',
+                            icon: '🤖',
+                            terminals: ['Terminal 1 1F Arrival Lobby'],
+                            hours: '24 hours (unmanned)',
+                            type: 'kiosk',
+                            note: '5-minute setup, multilingual support'
+                        },
+                        {
+                            name: 'eSIM square Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 4F South Wing', 'Terminal 2 B1F Railway Level'],
+                            hours: '7:00 - 21:00',
+                            type: 'counter',
+                            note: 'Data & voice plans available'
+                        }
+                    ]
+                },
+                'HND': {
+                    name: 'Haneda Airport',
+                    locations: [
+                        {
+                            name: 'Mobile Center Haneda',
+                            icon: '🏪',
+                            terminals: ['Terminal 3 2F Arrival', 'Terminal 3 3F Departure'],
+                            hours: '6:30 - 23:00',
+                            type: 'counter',
+                            note: 'Data & voice eSIM available'
+                        }
+                    ]
+                },
+                'KIX': {
+                    name: 'Kansai International Airport',
+                    locations: [
+                        {
+                            name: 'eSIM square Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 4F International Departure', 'Terminal 1 1F Arrival Lobby'],
+                            hours: '6:00 - 23:00',
+                            type: 'counter',
+                            note: 'Data & voice plans'
+                        }
+                    ]
+                },
+                'NGO': {
+                    name: 'Chubu Centrair Airport',
+                    locations: [
+                        {
+                            name: 'Mobile Center',
+                            icon: '🏪',
+                            terminals: ['Access Plaza 2F'],
+                            hours: '6:30 - 22:00',
+                            type: 'counter',
+                            note: 'Data eSIM only'
+                        }
+                    ]
+                },
+                'CTS': {
+                    name: 'New Chitose Airport',
+                    locations: [
+                        {
+                            name: 'Mobile Center',
+                            icon: '🏪',
+                            terminals: ['International Terminal 2F Arrival'],
+                            hours: '8:30 - 17:00',
+                            type: 'counter',
+                            note: 'Data eSIM only'
+                        }
+                    ]
+                },
+                'FUK': {
+                    name: 'Fukuoka Airport',
+                    locations: [
+                        {
+                            name: 'Telecom Square Counter',
+                            icon: '🏪',
+                            terminals: ['International Terminal 1F Arrival'],
+                            hours: '7:00 - 21:00',
+                            type: 'counter',
+                            note: 'Data eSIM available'
+                        }
+                    ]
+                }
+            };
+
+            const selectedAirport = window.app.selectedAirport || 'NRT';
+            const airportInfo = airportESIMLocations[selectedAirport];
+
+            return `
+                <div class="info-highlight" style="background: #E3F2FD; border-left-color: #1976D2; margin-bottom: 20px;">
+                    <div class="info-highlight-title" style="color: #1565C0;">💡 Price Reference Only</div>
+                    <div style="color: #1565C0;">Actual prices vary by provider. Compare options based on your needs and length of stay.</div>
+                </div>
+
+                <div style="background: #f5f5f5; border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--dark);">
+                        📊 Popular eSIM Providers Comparison
+                    </h4>
+                    
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; background: white; border-radius: 12px; overflow: hidden;">
+                            <thead>
+                                <tr style="background: #E3F2FD;">
+                                    <th style="padding: 12px; text-align: left; font-weight: 700;">Provider</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 700;">Best For</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 700;">Plans</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 700;">Price (USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px; font-weight: 600;">Airalo</td>
+                                    <td style="padding: 12px;">Short stays</td>
+                                    <td style="padding: 12px;">1GB/7d, 3GB/30d</td>
+                                    <td style="padding: 12px;">$4.5~</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #eee; background: #FFFDE7;">
+                                    <td style="padding: 12px; font-weight: 600;">Holafly</td>
+                                    <td style="padding: 12px;">Unlimited data</td>
+                                    <td style="padding: 12px;">Unlimited 5-90 days</td>
+                                    <td style="padding: 12px;">$5.90~/day</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px; font-weight: 600;">Ubigi</td>
+                                    <td style="padding: 12px;">Long stays</td>
+                                    <td style="padding: 12px;">10GB/30d, 50GB/30d</td>
+                                    <td style="padding: 12px;">$2.50~</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px; font-weight: 600;">IIJmio</td>
+                                    <td style="padding: 12px;">Japan coverage</td>
+                                    <td style="padding: 12px;">3GB/6GB data</td>
+                                    <td style="padding: 12px;">Store price varies</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px; font-weight: 600;">Mobal</td>
+                                    <td style="padding: 12px;">Voice calls</td>
+                                    <td style="padding: 12px;">25GB/8d + calls</td>
+                                    <td style="padding: 12px;">$33~</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; font-weight: 600;">Japan Wireless</td>
+                                    <td style="padding: 12px;">5G speed</td>
+                                    <td style="padding: 12px;">Unlimited 5G</td>
+                                    <td style="padding: 12px;">Plan varies</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="info-card" style="background: #E8F5E9; border: 1px solid #4CAF50;">
+                    <h3 class="info-card-title">🎯 Choosing the Right eSIM</h3>
+                    <div class="info-card-content">
+                        • <strong>Short stay (≤1 week):</strong> Airalo or Japan Wireless<br>
+                        • <strong>Long stay (≥1 month):</strong> Ubigi or IIJmio for better value<br>
+                        • <strong>Need unlimited data:</strong> Holafly or Flexiroam<br>
+                        • <strong>Need voice calls:</strong> Mobal includes Japanese phone number<br>
+                        • <strong>Security focused:</strong> Saily offers ad blocking & VPN features
+                    </div>
+                </div>
+
+                <div style="background: #f5f5f5; border-radius: 16px; padding: 20px; margin: 24px 0;">
+                    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--dark);">
+                        📍 Where to Buy at ${airportInfo.name}
+                    </h4>
+                    
+                    ${airportInfo.locations.map(location => `
+                        <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <span style="font-size: 28px;">${location.icon}</span>
+                                <div style="flex: 1;">
+                                    <h5 style="font-size: 16px; font-weight: 700; margin: 0; color: var(--dark);">${location.name}</h5>
+                                    ${location.note ? `<p style="font-size: 13px; color: #1976D2; margin: 4px 0 0 0;">💡 ${location.note}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-left: 40px;">
+                                ${location.terminals.map(terminal => `
+                                    <div style="font-size: 14px; color: var(--gray); margin-bottom: 4px;">
+                                        • ${terminal}
+                                    </div>
+                                `).join('')}
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                                    <span style="font-size: 16px;">⏰</span>
+                                    <span style="font-size: 14px; font-weight: 600; color: ${location.hours.includes('24 hours') ? '#4CAF50' : location.hours.includes('17:00') ? '#FF6F00' : 'var(--dark)'};">
+                                        ${location.hours}
+                                    </span>
+                                    ${location.hours.includes('unmanned') ? '<span style="background: #1976D2; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 8px;">Self-Service</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="purchase-steps">
+                    <h4 class="purchase-steps-title">eSIM Setup Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Check if your phone supports eSIM (iPhone XS/XR or newer, recent Android phones)</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Purchase eSIM at airport counter or online from provider</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Scan QR code with your phone's camera</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Follow on-screen instructions to add cellular plan</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Enable data roaming and select the new plan as primary</div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">💡 Pro Tips</h3>
+                    <div class="info-card-content">
+                        • <strong>Check compatibility:</strong> Settings → General → About → look for "Digital SIM" or "eSIM"<br>
+                        • <strong>Airport vs Online:</strong> Airport counters offer instant help but may cost more<br>
+                        • <strong>Dual SIM benefit:</strong> Keep your home number active while using Japanese data<br>
+                        • <strong>Activation timing:</strong> Some eSIMs activate immediately upon scanning<br>
+                        • <strong>Screenshot QR:</strong> Save the QR code image in case you need to reinstall
+                    </div>
+                </div>
+
+                <div class="info-card" style="background: #FFF3E0; border: 1px solid #FFB74D;">
+                    <h3 class="info-card-title">⚠️ Important Notes</h3>
+                    <div class="info-card-content">
+                        • <strong>Device locked?</strong> Carrier-locked phones cannot use eSIM from other providers<br>
+                        • <strong>One-time use:</strong> Most eSIM QR codes can only be scanned once<br>
+                        • <strong>No refunds:</strong> eSIMs typically cannot be refunded after activation<br>
+                        • <strong>iOS vs Android:</strong> Setup process differs between operating systems
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPocketWiFiModalContent() {
+            // 空港別のPocket WiFiレンタル場所データ
+            const airportWiFiLocations = {
+                'NRT': {
+                    name: 'Narita International Airport',
+                    locations: [
+                        {
+                            name: 'NINJA WiFi Self-Service Box',
+                            icon: '🤖',
+                            terminals: ['All terminals'],
+                            hours: '24 hours',
+                            type: 'self-service',
+                            note: 'No reservation required - instant pickup'
+                        },
+                        {
+                            name: 'JAL ABC Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 Arrival Lobby', 'Terminal 2 Arrival Lobby'],
+                            hours: '6:30 - Last flight + 1hr',
+                            type: 'counter',
+                            note: 'Walk-in available'
+                        },
+                        {
+                            name: 'NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['All terminals'],
+                            hours: '6:30 - 21:30',
+                            type: 'counter',
+                            note: 'Reservation recommended'
+                        },
+                        {
+                            name: 'Post Office Pickup',
+                            icon: '📮',
+                            terminals: ['Terminal 1 & 2'],
+                            hours: '8:30 - 20:00',
+                            type: 'special',
+                            note: 'Budget-friendly option - Online pre-order required'
+                        }
+                    ]
+                },
+                'HND': {
+                    name: 'Haneda Airport',
+                    locations: [
+                        {
+                            name: 'WiFiBOX (Self-Service)',
+                            icon: '🤖',
+                            terminals: ['Terminal 3'],
+                            hours: '24 hours',
+                            type: 'self-service',
+                            note: 'QR code pickup - no waiting'
+                        },
+                        {
+                            name: 'NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 3 2F Arrival Lobby'],
+                            hours: '6:30 - 23:00',
+                            type: 'counter',
+                            note: 'Closed 1:00-4:00 AM'
+                        },
+                        {
+                            name: 'Japan WiFi Buddy',
+                            icon: '🏪',
+                            terminals: ['Terminal 1'],
+                            hours: 'Check with provider',
+                            type: 'counter',
+                            note: 'Pre-order required'
+                        }
+                    ]
+                },
+                'KIX': {
+                    name: 'Kansai International Airport',
+                    locations: [
+                        {
+                            name: 'WiFiBOX (Self-Service)',
+                            icon: '🤖',
+                            terminals: ['Terminal 1'],
+                            hours: '24 hours',
+                            type: 'self-service',
+                            note: 'Unmanned locker - scan QR code'
+                        },
+                        {
+                            name: 'Global WiFi / NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 1F Arrival Lobby'],
+                            hours: '6:30 - 23:00',
+                            type: 'counter',
+                            note: 'Reservation recommended during peak season'
+                        }
+                    ]
+                },
+                'NGO': {
+                    name: 'Chubu Centrair Airport',
+                    locations: [
+                        {
+                            name: 'Global WiFi / NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 1 2F Access Plaza'],
+                            hours: '6:30 - 22:00',
+                            type: 'counter',
+                            note: 'Return box available'
+                        },
+                        {
+                            name: 'Global WiFi / NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['Terminal 2 2F Departure Lobby'],
+                            hours: '10:00 - 15:00',
+                            type: 'counter',
+                            note: 'Limited hours - plan accordingly'
+                        }
+                    ]
+                },
+                'CTS': {
+                    name: 'New Chitose Airport',
+                    locations: [
+                        {
+                            name: 'Mobile Center (Telecom Square)',
+                            icon: '🏪',
+                            terminals: ['International Terminal 2F Arrival Lobby'],
+                            hours: '8:00 - 20:00',
+                            type: 'counter',
+                            note: 'Multiple plans available'
+                        },
+                        {
+                            name: 'WiFi-HIRE Counter',
+                            icon: '🏪',
+                            terminals: ['Domestic Terminal 1F'],
+                            hours: '7:00 - 20:00',
+                            type: 'counter',
+                            note: 'Return box for after-hours'
+                        }
+                    ]
+                },
+                'FUK': {
+                    name: 'Fukuoka Airport',
+                    locations: [
+                        {
+                            name: 'WiFiBOX (Self-Service)',
+                            icon: '🤖',
+                            terminals: ['International Terminal 1F Arrival Lobby'],
+                            hours: '6:00 - 21:40',
+                            type: 'self-service',
+                            note: 'Instant pickup available'
+                        },
+                        {
+                            name: 'Global WiFi / NINJA WiFi Counter',
+                            icon: '🏪',
+                            terminals: ['International Terminal 1F Arrival Lobby'],
+                            hours: '7:00 - 21:30',
+                            type: 'counter',
+                            note: 'Pre-order for smooth pickup'
+                        }
+                    ]
+                }
+            };
+
+            const selectedAirport = window.app.selectedAirport || 'NRT';
+            const airportInfo = airportWiFiLocations[selectedAirport];
+
+            return `
+                <div class="info-highlight" style="background: #E3F2FD; border-left-color: #1976D2; margin-bottom: 20px;">
+                    <div class="info-highlight-title" style="color: #1565C0;">💡 Price Reference Only</div>
+                    <div style="color: #1565C0;">Actual prices may vary by provider and plan. The following are typical price ranges for reference.</div>
+                </div>
+
+                <div class="sim-options">
+                    <div class="sim-option">
+                        <div class="sim-duration">Unlimited Data</div>
+                        <div class="sim-data" style="font-size: 20px;">True Unlimited</div>
+                        <div class="sim-price">¥800-1,200/day</div>
+                        <div class="sim-features">
+                            • Best for heavy users<br>
+                            • 10+ hours battery life<br>
+                            • Connect 5-10 devices<br>
+                            • No speed throttling
+                        </div>
+                    </div>
+
+                    <div class="sim-option recommended">
+                        <div class="sim-duration">Daily Limit Plan</div>
+                        <div class="sim-data" style="font-size: 20px;">3-5GB per day</div>
+                        <div class="sim-price">¥500-800/day</div>
+                        <div class="sim-features">
+                            • Perfect for most travelers<br>
+                            • Great value<br>
+                            • Speed reduced after limit<br>
+                            • Connect 5 devices
+                        </div>
+                    </div>
+
+                    <div class="sim-option">
+                        <div class="sim-duration">Light Plan</div>
+                        <div class="sim-data" style="font-size: 20px;">500MB-1GB/day</div>
+                        <div class="sim-price">¥300-500/day</div>
+                        <div class="sim-features">
+                            • Budget option<br>
+                            • Good for light use<br>
+                            • Email & messaging<br>
+                            • Connect 3-5 devices
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f5f5f5; border-radius: 16px; padding: 20px; margin: 24px 0;">
+                    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--dark);">
+                        📍 Where to Rent at ${airportInfo.name}
+                    </h4>
+                    
+                    ${airportInfo.locations.map(location => `
+                        <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <span style="font-size: 28px;">${location.icon}</span>
+                                <div style="flex: 1;">
+                                    <h5 style="font-size: 16px; font-weight: 700; margin: 0; color: var(--dark);">${location.name}</h5>
+                                    ${location.note ? `<p style="font-size: 13px; color: ${location.note.includes('Budget-friendly') ? '#4CAF50' : location.note.includes('Limited hours') ? '#f44336' : '#FF6F00'}; margin: 4px 0 0 0;">
+                                        ${location.note.includes('Budget-friendly') ? '💰 ' : location.note.includes('Limited hours') ? '⚠️ ' : '💡 '}${location.note}
+                                    </p>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-left: 40px;">
+                                ${location.terminals.map(terminal => `
+                                    <div style="font-size: 14px; color: var(--gray); margin-bottom: 4px;">
+                                        • ${terminal}
+                                    </div>
+                                `).join('')}
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                                    <span style="font-size: 16px;">⏰</span>
+                                    <span style="font-size: 14px; font-weight: 600; color: ${location.hours === '24 hours' ? '#4CAF50' : location.hours.includes('15:00') ? '#f44336' : 'var(--dark)'};">
+                                        ${location.hours}
+                                    </span>
+                                    ${location.hours === '24 hours' ? '<span style="background: #4CAF50; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 8px;">24/7</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="info-card" style="background: #FFF3E0; border: 1px solid #FFB74D;">
+                    <h3 class="info-card-title">⚠️ Important Rental Information</h3>
+                    <div class="info-card-content">
+                        • <strong>Reservation:</strong> Highly recommended during peak season (Mar-Apr, Jul-Aug, Dec)<br>
+                        • <strong>Return:</strong> Can use return box for after-hours or mail with prepaid envelope<br>
+                        • <strong>ID Required:</strong> Passport needed for rental<br>
+                        • <strong>Late Fees:</strong> ¥500-1,000/day if returned late<br>
+                        • <strong>Lost Device:</strong> ¥20,000-40,000 penalty (insurance available)
+                    </div>
+                </div>
+
+                <div class="purchase-steps">
+                    <h4 class="purchase-steps-title">Rental Process</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Find the rental counter or self-service box at your arrival terminal</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Show your reservation (if pre-ordered) or select a plan on-site</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Present your passport and complete the rental agreement</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Receive device with charger, instructions, and return envelope</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-text">Connect using the network name and password on the device</div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">💡 Pro Tips</h3>
+                    <div class="info-card-content">
+                        • <strong>Self-service vs Counter:</strong> WiFiBOX is fastest but counters offer support<br>
+                        • <strong>Battery Life:</strong> Carry the included charger or a power bank<br>
+                        • <strong>Group Travel:</strong> One device can connect 5-10 phones - split the cost!<br>
+                        • <strong>Return Reminder:</strong> Set a phone alert for your departure day<br>
+                        • <strong>Coverage:</strong> Works everywhere in Japan, including rural areas
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">📊 Quick Comparison: WiFi vs SIM</h3>
+                    <div class="info-card-content">
+                        <strong>Choose Pocket WiFi if:</strong><br>
+                        • Traveling with family/friends<br>
+                        • Need to connect laptops/tablets<br>
+                        • Want unlimited data<br>
+                        • Don't want to change SIM cards<br><br>
+                        
+                        <strong>Choose SIM card if:</strong><br>
+                        • Traveling solo<br>
+                        • Want a lighter setup<br>
+                        • Prefer not to charge extra devices<br>
+                        • Staying longer than 2 weeks
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPlatformGuideModalContent() {
+            return `
+                <div class="info-highlight" style="background: #E8F5E9; border-left-color: #4CAF50;">
+                    <div class="info-highlight-title">🚃 Platform Basics</div>
+                    <div>Japanese stations can be complex, but these visual cues will help you navigate confidently.</div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">📊 Reading Platform Signs</h3>
+                    <div class="info-card-content">
+                        • <strong>○番線 (○-bansen):</strong> Platform number - look for "Platform ○" in English<br>
+                        • <strong>Electronic boards:</strong> Show train type, departure time, and destination<br>
+                        • <strong>Train types:</strong><br>
+                        &nbsp;&nbsp;- 普通 (Local) - Stops at every station<br>
+                        &nbsp;&nbsp;- 快速 (Rapid) - Skips smaller stations<br>
+                        &nbsp;&nbsp;- 特急 (Limited Express) - Fastest, may need extra ticket<br>
+                        • <strong>Next train:</strong> Usually highlighted in yellow or flashing
+                    </div>
+                </div>
+            `;
+        }
+
+        function getHowToBuyModalContent() {
+            return `
+                <div class="info-highlight" style="background: #E3F2FD; border-left-color: #1976D2;">
+                    <div class="info-highlight-title">💳 IC Card Recommended!</div>
+                    <div>If you plan to use trains frequently, get a Suica or local IC card first. It's faster, easier, and works on all local trains.</div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🎫 Ticket Machine Guide</h3>
+                    <div class="info-card-content">
+                        <strong>Step-by-step process:</strong><br>
+                        1. <strong>Language button:</strong> Press "English" (英語) first<br>
+                        2. <strong>Check fare:</strong> Look at the map above machines<br>
+                        3. <strong>Select ticket type:</strong><br>
+                        &nbsp;&nbsp;- One-way ticket (片道)<br>
+                        &nbsp;&nbsp;- IC card charge (if you have one)<br>
+                        4. <strong>Choose fare amount:</strong> Touch the price button<br>
+                        5. <strong>Insert money:</strong> Accepts bills and coins<br>
+                        6. <strong>Collect ticket and change:</strong> Don't forget!
+                    </div>
+                </div>
+            `;
+        }
+
+        function getWhereToUseModalContent() {
+            return `
+                <div class="info-highlight" style="background: #E8F5E9; border-left-color: #4CAF50;">
+                    <div class="info-highlight-title">✅ Works Nationwide!</div>
+                    <div>All IC cards (Suica, ICOCA, PASMO, etc.) are compatible across Japan. One card works everywhere!</div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🚃 Transportation</h3>
+                    <div class="info-card-content">
+                        <strong>Where you can tap:</strong><br>
+                        ✓ JR trains nationwide<br>
+                        ✓ Private railways<br>
+                        ✓ Subways (Tokyo Metro, Osaka Metro, etc.)<br>
+                        ✓ Most city buses<br>
+                        ✓ Some highway buses<br>
+                        ✓ Selected taxis (look for IC card sticker)<br>
+                        ✓ Airport shuttles (some routes)<br><br>
+                        
+                        <strong>Special notes:</strong><br>
+                        • Shinkansen: Limited support (non-reserved seats only with Mobile Suica)<br>
+                        • Some rural buses may not accept IC cards<br>
+                        • Always check for the IC card symbol at gates
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🏪 Shopping & Dining</h3>
+                    <div class="info-card-content">
+                        <strong>Convenience stores:</strong><br>
+                        ✓ 7-Eleven<br>
+                        ✓ FamilyMart<br>
+                        ✓ Lawson<br>
+                        ✓ Ministop<br>
+                        ✓ Daily Yamazaki<br><br>
+                        
+                        <strong>Vending machines:</strong><br>
+                        ✓ Drinks (most machines)<br>
+                        ✓ Snacks<br>
+                        ✓ Ice cream<br>
+                        ✓ Some cigarette machines<br><br>
+                        
+                        <strong>Restaurants & cafes:</strong><br>
+                        ✓ Major chains (McDonald's, Starbucks, etc.)<br>
+                        ✓ Many ramen shops<br>
+                        ✓ Department store restaurants<br>
+                        ✓ Station eateries
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🎯 Other Services</h3>
+                    <div class="info-card-content">
+                        <strong>Station services:</strong><br>
+                        ✓ Coin lockers<br>
+                        ✓ Parking meters (some areas)<br>
+                        ✓ Station shops (Kiosk, NewDays)<br><br>
+                        
+                        <strong>Entertainment:</strong><br>
+                        ✓ Some karaoke boxes<br>
+                        ✓ Game centers (selected)<br>
+                        ✓ Museums (some locations)<br>
+                        ✓ Tourist attractions (increasing adoption)<br><br>
+                        
+                        <strong>Retail stores:</strong><br>
+                        ✓ Don Quijote<br>
+                        ✓ Bic Camera<br>
+                        ✓ AEON supermarkets<br>
+                        ✓ Many drugstores
+                    </div>
+                </div>
+
+                <div class="info-card" style="background: #FFF3E0; border: 1px solid #FFB74D;">
+                    <h3 class="info-card-title">⚠️ Cannot Use IC Cards</h3>
+                    <div class="info-card-content">
+                        • <strong>Long-distance buses:</strong> Most highway buses require tickets<br>
+                        • <strong>Reserved seats:</strong> Shinkansen and limited express trains<br>
+                        • <strong>Some small shops:</strong> Traditional stores may be cash-only<br>
+                        • <strong>Temples/shrines:</strong> Admission fees usually cash-only<br>
+                        • <strong>Rural areas:</strong> Limited acceptance outside cities
+                    </div>
+                </div>
+
+                <div class="purchase-steps">
+                    <h4 class="purchase-steps-title">💡 Pro Tips</h4>
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Look for these logos at entrances: Suica, PASMO, ICOCA, or the generic IC symbol</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Keep minimum ¥1,000 balance for smooth travel (some stations require minimum fare to enter)</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Tap the same card when entering and exiting - mixing cards will cause errors</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text">If your card is rejected, try the staffed gate - they can help troubleshoot</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTopUpGuideModalContent() {
+            return `
+                <div class="info-highlight" style="background: #E3F2FD; border-left-color: #1976D2;">
+                    <div class="info-highlight-title">💰 Keep Your Card Topped Up!</div>
+                    <div>Running low on balance? Top up at any station or convenience store. Minimum balance required to enter most stations is ¥130-200.</div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🎫 At Train Stations</h3>
+                    <div class="info-card-content">
+                        <strong>Using ticket machines:</strong><br>
+                        1. Insert your IC card in the slot<br>
+                        2. Select "Charge" (チャージ)<br>
+                        3. Choose amount (¥1,000, ¥2,000, ¥3,000, ¥5,000, ¥10,000)<br>
+                        4. Insert cash (bills or coins)<br>
+                        5. Wait for confirmation beep<br>
+                        6. Don't forget to take your card!<br><br>
+                        
+                        <strong>Machine types:</strong><br>
+                        • Black machines: IC card charging only (fastest)<br>
+                        • Pink/Blue machines: Multi-function (tickets + charging)<br>
+                        • Look for "IC" mark on machines
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">🏪 At Convenience Stores</h3>
+                    <div class="info-card-content">
+                        <strong>Easy process:</strong><br>
+                        1. Tell staff "Suica charge" (スイカチャージ)<br>
+                        2. Hand over your card<br>
+                        3. Say the amount (e.g., "sen en" = ¥1,000)<br>
+                        4. Pay in cash<br>
+                        5. Staff will handle everything<br><br>
+                        
+                        <strong>Useful phrases:</strong><br>
+                        • "Charge please" = チャージお願いします<br>
+                        • ¥1,000 = sen en (千円)<br>
+                        • ¥3,000 = san-zen en (三千円)<br>
+                        • ¥5,000 = go-sen en (五千円)
+                    </div>
+                </div>
+
+                <div class="info-card" style="background: #E8F5E9; border: 1px solid #4CAF50;">
+                    <h3 class="info-card-title">📱 Mobile App Charging (iPhone)</h3>
+                    <div class="info-card-content">
+                        <strong>For Mobile Suica / Apple Wallet:</strong><br>
+                        • Open Wallet app<br>
+                        • Select your Suica card<br>
+                        • Tap "Add Money"<br>
+                        • Choose amount<br>
+                        • Pay with linked credit card<br>
+                        • Instant top-up, no cash needed!<br><br>
+                        
+                        <strong>Benefits:</strong><br>
+                        ✓ Charge anytime, anywhere<br>
+                        ✓ Use credit card (earn points!)<br>
+                        ✓ Check balance instantly<br>
+                        ✓ Set auto-charge (optional)
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">💡 Smart Charging Tips</h3>
+                    <div class="info-card-content">
+                        • <strong>Maximum balance:</strong> ¥20,000<br>
+                        • <strong>Charge in bulk:</strong> Fewer transactions = less hassle<br>
+                        • <strong>Before rush hour:</strong> Avoid queues at machines<br>
+                        • <strong>Keep ¥2,000+:</strong> Covers most day trips<br>
+                        • <strong>Airport charging:</strong> Machines available but often crowded<br>
+                        • <strong>Emergency low balance:</strong> Staff gate can let you exit (pay difference)
+                    </div>
+                </div>
+
+                <div class="info-card" style="background: #FFF3E0; border: 1px solid #FFB74D;">
+                    <h3 class="info-card-title">⚠️ Important Notes</h3>
+                    <div class="info-card-content">
+                        • <strong>Cash only at machines</strong> (except mobile versions)<br>
+                        • <strong>No change given</strong> - charge goes to card<br>
+                        • <strong>Receipt available</strong> - Press 領収書 button<br>
+                        • <strong>Card errors:</strong> Red light = problem, see staff<br>
+                        • <strong>Lost card:</strong> Balance cannot be recovered (except registered cards)
+                    </div>
+                </div>
+            `;
+        }
+
+        // Prevent overscroll on iOS
+        document.body.addEventListener('touchmove', function(e) {
+            if (document.body.scrollHeight <= window.innerHeight) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
+                
