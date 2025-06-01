@@ -1423,6 +1423,21 @@
                     <div>${getRecommendedTransport()}</div>
                 </div>
 
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(window.app.selectedAirport + ' airport station')}', '_blank')">
+                        <span class="quick-action-icon">🗺️</span>
+                        <span>Navigate</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="platform-guide">
+                        <span class="quick-action-icon">🚪</span>
+                        <span>Platform Guide</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="how-to-buy">
+                        <span class="quick-action-icon">🎫</span>
+                        <span>How to Buy</span>
+                    </div>
+                </div>
+
                 <div class="info-card">
                     <h3 class="info-card-title">Train Options</h3>
                     <div class="info-card-content">
@@ -1519,6 +1534,21 @@
                     <h3 class="info-card-title">Stay Connected in Japan</h3>
                     <div class="info-card-content">
                         Get online immediately with SIM cards or pocket WiFi available at ${window.app.selectedAirport}.
+                    </div>
+                </div>
+
+                 <div class="quick-actions">
+                    <div class="quick-action-btn" data-modal="sim-cards">
+                        <span class="quick-action-icon">📱</span>
+                        <span>SIM Cards</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="pocket-wifi">
+                        <span class="quick-action-icon">📶</span>
+                        <span>Pocket WiFi</span>
+                    </div>
+                    <div class="quick-action-btn" data-modal="esim-setup">
+                        <span class="quick-action-icon">💬</span>
+                        <span>eSIM Setup</span>
                     </div>
                 </div>
 
@@ -1789,25 +1819,6 @@
                     <div>Skip trains during 7-9 AM and 5-7 PM on weekdays if you have large luggage. Your future self will thank you!</div>
                 </div>
 
-                <div class="quick-actions">
-                    <div class="quick-action-btn">
-                        <span class="quick-action-icon">🏧</span>
-                        <span>Find ATMs</span>
-                    </div>
-                    <div class="quick-action-btn">
-                        <span class="quick-action-icon">🍜</span>
-                        <span>Food Courts</span>
-                    </div>
-                    <div class="quick-action-btn">
-                        <span class="quick-action-icon">🚻</span>
-                        <span>Facilities</span>
-                    </div>
-                    <div class="quick-action-btn">
-                        <span class="quick-action-icon">📞</span>
-                        <span>Emergency</span>
-                    </div>
-                </div>
-                
                 <div class="info-card" style="background: #FFF3E0; border-left: 6px solid #E60012;">
                   <h3 class="info-card-title">🚨 Emergency</h3>
                   <div class="info-card-content">
