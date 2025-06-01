@@ -350,6 +350,11 @@
             overflow: hidden;
         }
 
+            .user-type-card.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        
         .user-type-card::after {
             content: '';
             position: absolute;
@@ -1152,9 +1157,8 @@
         function generateUserTypeCards() {
             const container = document.querySelector('.js-usertype-grid');
             if (!container) return;
-            
             container.innerHTML = userTypes.map(type => `
-                <div class="user-type-card" data-usertype="${type.id}">
+                <div class="user-type-card${type.id !== 'arriving' ? ' disabled' : ''}" data-usertype="${type.id}">
                     <div class="user-type-icon">${type.icon}</div>
                     <h3 class="user-type-title">${type.title}</h3>
                     <p class="user-type-desc">${type.desc}</p>
@@ -1205,7 +1209,7 @@
             if (userTypeGrid) {
                 userTypeGrid.addEventListener('click', (e) => {
                     const card = e.target.closest('.user-type-card');
-                    if (card) {
+                   if (card && !card.classList.contains('disabled')) {
                         const userType = card.dataset.usertype;
                         selectUserType(userType);
                     }
@@ -1417,21 +1421,6 @@
                 <div class="info-highlight">
                     <div class="info-highlight-title">💡 Recommended Option</div>
                     <div>${getRecommendedTransport()}</div>
-                </div>
-
-                <div class="quick-actions">
-                    <div class="quick-action-btn" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(window.app.selectedAirport + ' airport station')}', '_blank')">
-                        <span class="quick-action-icon">🗺️</span>
-                        <span>Navigate</span>
-                    </div>
-                    <div class="quick-action-btn" data-modal="platform-guide">
-                        <span class="quick-action-icon">🚪</span>
-                        <span>Platform Guide</span>
-                    </div>
-                    <div class="quick-action-btn" data-modal="how-to-buy">
-                        <span class="quick-action-icon">🎫</span>
-                        <span>How to Buy</span>
-                    </div>
                 </div>
 
                 <div class="info-card">
@@ -1832,6 +1821,16 @@
                         <span class="quick-action-icon">📞</span>
                         <span>Emergency</span>
                     </div>
+                </div>
+                
+                <div class="info-card" style="background: #FFF3E0; border-left: 6px solid #E60012;">
+                  <h3 class="info-card-title">🚨 Emergency</h3>
+                  <div class="info-card-content">
+                    <strong>110 (Police, emergency phone number):</strong> For accidents, theft, or crime. English support available.<br>
+                    <strong>119 (Fire/Ambulance, emergency phone number):</strong> For fire or medical emergencies. Say "English please" if needed.<br>
+                    <strong>Lost passport:</strong> Contact the nearest police box (Koban) or embassy.<br>
+                    <strong>General help:</strong> Airport staff are trained to assist foreigners in emergencies.
+                  </div>
                 </div>
 
                 <div class="info-card">
